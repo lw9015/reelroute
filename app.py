@@ -5,7 +5,7 @@ Starten: python app.py
 Dann: http://localhost:5000
 """
 
-import os, json, time, tempfile, subprocess, base64, urllib.request, urllib.parse
+import os, sys, json, time, tempfile, subprocess, base64, urllib.request, urllib.parse
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ OPENAI_API_KEY    = os.getenv("OPENAI_API_KEY", "")
 def fetch_metadata(url):
     try:
         out = subprocess.check_output(
-            ["yt-dlp", "--dump-json", "--skip-download", "--no-playlist", url],
+            [sys.executable, "-m", "yt_dlp", "--dump-json", "--skip-download", "--no-playlist", url],
             stderr=subprocess.DEVNULL, timeout=30
         )
         return json.loads(out)
@@ -31,7 +31,7 @@ def download_video(url, out_dir):
     out_path = os.path.join(out_dir, "reel.%(ext)s")
     try:
         subprocess.check_call(
-            ["yt-dlp", "--format", "worst[ext=mp4]/worst",
+            [sys.executable, "-m", "yt_dlp", "--format", "worst[ext=mp4]/worst",
              "--match-filter", "duration < 180", "-o", out_path, url],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60
         )
@@ -342,9 +342,14 @@ def analyze_reel(url, data=None):
                 "source": "geotag"
             })
 
+        # Caption/Hashtags früh auswerten. Auf Vercel sind ffmpeg/Google Vision oft
+        # nicht verfügbar, aber Instagram-Captions enthalten häufig bereits den Ort.
+        all_text = " ".join([result["caption"]] + result["hashtags"])
+        result["locations"].extend(ner_from_text(all_text, "caption"))
+
         # Schritt 2: Video + Frames
         result["steps"].append("vision")
-        video_path = download_video(url, tmpdir)
+        video_path = download_video(url, tmpdir) if (GOOGLE_VISION_KEY or OPENAI_API_KEY or not result["locations"]) else None
 
         if video_path:
             frames = extract_frames(video_path, tmpdir)
@@ -357,8 +362,6 @@ def analyze_reel(url, data=None):
 
         # Schritt 4: NER auf Text
         result["steps"].append("ner")
-        all_text = " ".join([result["caption"]] + result["hashtags"])
-        result["locations"].extend(ner_from_text(all_text, "caption"))
         if result["transcript"]:
             result["locations"].extend(ner_from_text(result["transcript"], "audio"))
 
