@@ -55,9 +55,9 @@ button#analyzeBtn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .samples-label { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
 .samples { display: flex; flex-direction: column; gap: 8px; }
-.sample { display: flex; align-items: center; gap: 12px; background: var(--sand); border-radius: 12px; padding: 12px 16px; cursor: pointer; border: 1px solid transparent; transition: border-color 0.2s, background 0.2s; }
+.sample { display: flex; align-items: center; gap: 12px; background: var(--sand); border-radius: 12px; padding: 10px 14px; cursor: pointer; border: 1px solid transparent; transition: border-color 0.2s, background 0.2s; }
 .sample:hover { border-color: var(--teal); background: var(--teal-light); }
-.sample-icon { font-size: 20px; width: 36px; text-align: center; }
+.sample-thumb { width: 46px; height: 62px; border-radius: 8px; object-fit: cover; flex-shrink: 0; box-shadow: 0 1px 8px rgba(0,0,0,0.14); }
 .sample-info { flex: 1; }
 .sample-name { font-size: 13px; font-weight: 500; }
 .sample-url  { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
@@ -210,7 +210,7 @@ footer { text-align: center; padding: 32px 24px; font-size: 12px; color: var(--m
   <div class="samples-label">Beispiel-Reels</div>
   <div class="samples">
     <div class="sample" onclick="loadSample('hallstatt')">
-      <div class="sample-icon">🏘️</div>
+      <img class="sample-thumb" src="{{ url_for('static', filename='examples/hallstatt-austria.jpeg') }}" alt="Hallstatt Austria Beispiel-Reel">
       <div class="sample-info">
         <div class="sample-name">Hallstatt im Herbst</div>
         <div class="sample-url">tiktok.com/@austria.hidden/video/7234567890…</div>
@@ -218,7 +218,7 @@ footer { text-align: center; padding: 32px 24px; font-size: 12px; color: var(--m
       <span class="sample-arr">→</span>
     </div>
     <div class="sample" onclick="loadSample('wien')">
-      <div class="sample-icon">🎡</div>
+      <img class="sample-thumb" src="{{ url_for('static', filename='examples/naschmarkt-vienna.jpeg') }}" alt="Naschmarkt Vienna Beispiel-Reel">
       <div class="sample-info">
         <div class="sample-name">Wien Naschmarkt Morning</div>
         <div class="sample-url">instagram.com/reels/CxWien98710…</div>
@@ -226,7 +226,7 @@ footer { text-align: center; padding: 32px 24px; font-size: 12px; color: var(--m
       <span class="sample-arr">→</span>
     </div>
     <div class="sample" onclick="loadSample('salzburg')">
-      <div class="sample-icon">🎶</div>
+      <img class="sample-thumb" src="{{ url_for('static', filename='examples/salzburg-altstadt.jpeg') }}" alt="Salzburg Altstadt Beispiel-Reel">
       <div class="sample-info">
         <div class="sample-name">Salzburg Altstadt</div>
         <div class="sample-url">tiktok.com/@reiseblog.at/video/7198765…</div>
