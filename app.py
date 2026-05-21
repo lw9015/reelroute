@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 GOOGLE_VISION_KEY = os.getenv("GOOGLE_VISION_KEY", "")
 OPENAI_API_KEY    = os.getenv("OPENAI_API_KEY", "")
+OEBB_FAHRPLAN_URL = "https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665"
 
 
 # ── Hilfsfunktionen ────────────────────────────────────────────────────────────
@@ -195,24 +196,7 @@ def get_oebb_connections(origin="Zürich HB", destination="Wien Hbf"):
     route = ROUTES.get(("zürich", dest_key),
                        {"duration": "ca. 4h", "departure": "08:00", "changes": 1, "price_from": "ab €29"})
 
-    # Direkter ÖBB Buchungslink mit vorausgefüllter Strecke
-    date = time.strftime("%Y-%m-%d")
-    oebb_params = urllib.parse.urlencode({
-        "from": origin,
-        "to": destination,
-        "date": date,
-        "time": "08:00",
-        "via": "",
-        "return": "",
-        "returnDate": "",
-        "returnTime": "",
-        "adultCount": "1",
-        "studentCount": "0",
-        "seniorCount": "0",
-        "bahnCardType": "NONE",
-        "lang": "de",
-    })
-    route["booking_url"] = f"https://tickets.oebb.at/de/ticket?{oebb_params}"
+    route["booking_url"] = OEBB_FAHRPLAN_URL
     route["destination"] = destination
     route["origin"] = origin
     return route

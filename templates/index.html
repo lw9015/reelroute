@@ -501,7 +501,7 @@ footer {
         </div>
 
         <div class="booking-list">
-          <a class="booking-card" id="trainLink" href="https://tickets.oebb.at" target="_blank">
+          <a class="booking-card" id="trainLink" href="https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665" target="_blank">
             <span class="booking-icon">Ö</span>
             <span>
               <span class="booking-name" id="trainTitle">ÖBB Verbindung</span>
@@ -563,6 +563,7 @@ footer {
 
 <script>
 const imgBase = "{{ url_for('static', filename='examples/') }}";
+const OEBB_FAHRPLAN_URL = "https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665";
 const DESTINATIONS = {
   hallstatt: {
     region: "Salzkammergut",
@@ -641,10 +642,8 @@ function updateLinks(item) {
   const checkIn = document.getElementById("checkIn").value;
   const checkOut = document.getElementById("checkOut").value;
   const travelers = document.getElementById("travelers").value || "2";
-  const from = encodeURIComponent(origin);
-  const to = encodeURIComponent(item.oebbTo);
   const hotelQuery = encodeURIComponent(item.name);
-  document.getElementById("trainLink").href = `https://tickets.oebb.at/de/ticket?from=${from}&to=${to}&date=${checkIn}`;
+  document.getElementById("trainLink").href = OEBB_FAHRPLAN_URL;
   document.getElementById("hotelLink").href = `https://www.booking.com/search.html?ss=${hotelQuery}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${travelers}`;
   document.getElementById("infoLink").href = item.infoUrl;
   document.getElementById("trainTitle").textContent = `ÖBB Railjet · ${origin} → ${item.name}`;
@@ -712,7 +711,7 @@ function renderAnalyzedDestination(data) {
   const checkIn = document.getElementById("checkIn").value;
   const checkOut = document.getElementById("checkOut").value;
   const travelers = document.getElementById("travelers").value || "2";
-  document.getElementById("trainLink").href = data.oebb?.booking_url || `https://tickets.oebb.at/de/ticket?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(name)}&date=${checkIn}`;
+  document.getElementById("trainLink").href = data.oebb?.booking_url || OEBB_FAHRPLAN_URL;
   document.getElementById("hotelLink").href = data.hotel?.url || `https://www.booking.com/search.html?ss=${encodeURIComponent(name)}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${travelers}`;
   document.getElementById("infoLink").href = data.austria_info?.search_url || `https://www.google.com/search?q=${encodeURIComponent(name + " austria.info")}`;
   document.getElementById("trainTitle").textContent = `ÖBB · ${origin} → ${name}`;
