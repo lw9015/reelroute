@@ -93,7 +93,7 @@ a { color: inherit; }
   justify-content: center;
 }
 .hero {
-  padding: 54px 32px 36px;
+  padding: 64px 32px 58px;
   text-align: center;
 }
 .eyebrow {
@@ -127,7 +127,24 @@ h1 {
 .destination-wrap {
   max-width: 1540px;
   margin: 0 auto;
-  padding: 12px 32px 88px;
+  padding: 76px 32px 96px;
+}
+.section-head {
+  max-width: 760px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+.section-title {
+  margin: 10px 0 10px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(34px, 4vw, 56px);
+  font-style: italic;
+  line-height: 1.05;
+}
+.section-copy {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.6;
 }
 .destination-grid {
   display: grid;
@@ -209,6 +226,7 @@ h1 {
 .trip-section {
   background: var(--surface);
   border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   padding: 74px 32px 90px;
 }
 .trip-shell {
@@ -456,10 +474,6 @@ footer {
     </div>
   </section>
 
-  <section class="destination-wrap" aria-label="Orte auswählen">
-    <div class="destination-grid" id="destinationGrid"></div>
-  </section>
-
   <section class="trip-section" id="tripSection">
     <div class="trip-shell">
       <div>
@@ -556,6 +570,15 @@ footer {
         </div>
       </aside>
     </div>
+  </section>
+
+  <section class="destination-wrap" aria-label="Weitere Orte entdecken">
+    <div class="section-head">
+      <div class="eyebrow">Weitere Inspiration</div>
+      <h2 class="section-title">Noch mehr Reel-Ideen für deine Reise.</h2>
+      <p class="section-copy">Wenn du nach der Analyse weiterstöbern möchtest, kannst du hier direkt beliebte Orte auswählen und die wichtigsten Reiseinfos öffnen.</p>
+    </div>
+    <div class="destination-grid" id="destinationGrid"></div>
   </section>
 </main>
 
@@ -658,7 +681,7 @@ function renderDestination(shouldScroll = true) {
   document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
   const cardIndex = Object.keys(DESTINATIONS).indexOf(selectedKey);
   document.querySelectorAll(".destination-card")[cardIndex]?.classList.add("active");
-  document.getElementById("tripKicker").textContent = `Deine Reise · ${item.region}`;
+  document.getElementById("tripKicker").textContent = `Ausgewählt · ${item.region}`;
   document.getElementById("tripTitle").textContent = `${item.name} in einem Tap buchen.`;
   document.getElementById("tripCopy").textContent = item.copy;
   document.getElementById("destinationName").value = item.name;
@@ -676,6 +699,29 @@ function renderDestination(shouldScroll = true) {
 function selectDestination(key) {
   selectedKey = key;
   renderDestination(true);
+}
+
+function renderEmptyTrip() {
+  document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
+  document.getElementById("tripKicker").textContent = "Deine Analyse";
+  document.getElementById("tripTitle").textContent = "Füge oben ein Reel ein.";
+  document.getElementById("tripCopy").textContent = "Nach der Analyse erscheinen hier der erkannte Ort, Highlights, Reisedaten und passende Links. Alternativ kannst du unten eine Inspiration auswählen.";
+  document.getElementById("destinationName").value = "-";
+  document.getElementById("detailImage").src = DESTINATIONS.hallstatt.image;
+  document.getElementById("detailImage").alt = "ReelRoute Reisevorschau";
+  document.getElementById("bestTime").textContent = "Nach Analyse";
+  document.getElementById("travelStyle").textContent = "Reel-Inspiration";
+  document.getElementById("duration").textContent = "2-3 Tage";
+  document.getElementById("budget").textContent = "Route prüfen";
+  document.getElementById("highlightList").innerHTML = ["Ort aus Reel erkennen", "Highlights extrahieren", "Reiseoptionen öffnen"].map(highlight => `<div class="highlight">${highlight}</div>`).join("");
+  document.getElementById("trainTitle").textContent = "ÖBB Verbindung";
+  document.getElementById("trainMeta").textContent = "Wird nach Analyse oder Auswahl aktualisiert";
+  document.getElementById("hotelTitle").textContent = "Unterkunft";
+  document.getElementById("hotelMeta").textContent = "Reisedaten oben im Ergebnisbereich anpassen";
+  document.getElementById("infoTitle").textContent = "Offizielle Infos";
+  document.getElementById("trainLink").href = OEBB_FAHRPLAN_URL;
+  document.getElementById("hotelLink").href = "https://www.booking.com";
+  document.getElementById("infoLink").href = "https://www.austria.info/de";
 }
 
 function destinationKeyFromText(text) {
@@ -771,7 +817,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkIn").value = toISO(start);
   document.getElementById("checkOut").value = toISO(end);
   buildCards();
-  renderDestination(false);
+  renderEmptyTrip();
   ["originCity", "checkIn", "checkOut", "travelers"].forEach(id => {
     document.getElementById(id).addEventListener("change", () => {
       if (DESTINATIONS[selectedKey]) updateLinks(DESTINATIONS[selectedKey]);
