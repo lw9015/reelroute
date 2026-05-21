@@ -138,11 +138,13 @@ def ner_from_text(text, source):
     # Bekannte österreichische Orte / Touristenziele erkennen
     known = [
         "Hallstatt", "Wien", "Vienna", "Salzburg", "Innsbruck", "Graz",
+        "Naschmarkt", "Wiener Prater", "Getreidegasse", "Festung Hohensalzburg",
         "Hallstätter See", "Dachstein", "Schladming", "Zell am See",
         "Kitzbühel", "Kaprun", "Seefeld", "Bregenz", "Klagenfurt",
         "Wachau", "Melk", "Dürnstein", "Krems", "Rust", "Neusiedler See",
         "Gosau", "Bad Ischl", "Gmunden", "Traunsee", "Wolfgangsee",
-        "St. Wolfgang", "Mondsee", "Attersee", "Strobl", "Fuschl"
+        "St. Wolfgang", "Mondsee", "Attersee", "Strobl", "Fuschl",
+        "St. Anton", "Arlberg", "Tirol", "Tyrol"
     ]
     text_lower = text.lower()
     for place in known:

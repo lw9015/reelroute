@@ -118,10 +118,16 @@ h1 {
   font-size: 17px;
   line-height: 1.65;
 }
+.hero-analyzer {
+  max-width: 780px;
+  margin: 28px auto 0;
+  text-align: left;
+  box-shadow: 0 18px 55px rgba(20, 24, 31, 0.1);
+}
 .destination-wrap {
   max-width: 1540px;
   margin: 0 auto;
-  padding: 20px 32px 88px;
+  padding: 12px 32px 88px;
 }
 .destination-grid {
   display: grid;
@@ -360,6 +366,13 @@ h1 {
   padding: 22px;
   background: #fbfcfe;
 }
+.hero-analyzer.url-card { margin-top: 28px; }
+.url-hint {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .url-row {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -428,9 +441,19 @@ footer {
 
 <main>
   <section class="hero">
-    <div class="eyebrow">Wähle deine Inspiration</div>
+    <div class="eyebrow">Instagram oder TikTok Reel analysieren</div>
     <h1>Vom Reel direkt zur buchbaren Reise.</h1>
-    <p class="hero-copy">Such dir einen Ort aus. ReelRoute zeigt dir sofort die wichtigsten Infos, Highlights und passende nächste Schritte für die Reise.</p>
+    <p class="hero-copy">Füge oben deinen Reel-Link ein oder wähle darunter einen Beispiel-Ort aus. ReelRoute erkennt den Ort und zeigt dir sofort die wichtigsten nächsten Schritte.</p>
+    <div class="url-card hero-analyzer">
+      <div class="trip-kicker">Reel-Link</div>
+      <div class="url-row">
+        <input id="url" type="text" inputmode="url" placeholder="https://www.instagram.com/reel/...">
+        <button id="analyzeBtn" type="button" onclick="analyze()">Analysieren</button>
+      </div>
+      <div class="url-hint">Instagram Reels, TikTok Links und Kurzvideo-URLs werden über den Analyzer verarbeitet.</div>
+      <div id="statusBox">Reel wird analysiert...</div>
+      <div id="errorBox"></div>
+    </div>
   </section>
 
   <section class="destination-wrap" aria-label="Orte auswählen">
@@ -502,16 +525,6 @@ footer {
             </span>
             <span class="booking-link">Infos öffnen</span>
           </a>
-        </div>
-
-        <div class="url-card">
-          <div class="trip-kicker">Eigenes Reel testen</div>
-          <div class="url-row">
-            <input id="url" type="text" placeholder="Instagram oder TikTok Reel-Link einfügen">
-            <button id="analyzeBtn" type="button" onclick="analyze()">Analysieren</button>
-          </div>
-          <div id="statusBox">Reel wird analysiert...</div>
-          <div id="errorBox"></div>
         </div>
       </div>
 
@@ -666,6 +679,50 @@ function selectDestination(key) {
   renderDestination(true);
 }
 
+function destinationKeyFromText(text) {
+  const value = (text || "").toLowerCase();
+  if (value.includes("hallstatt") || value.includes("salzkammergut") || value.includes("dachstein")) return "hallstatt";
+  if (value.includes("wien") || value.includes("vienna") || value.includes("naschmarkt") || value.includes("prater")) return "wien";
+  if (value.includes("salzburg") || value.includes("getreidegasse") || value.includes("hohensalzburg")) return "salzburg";
+  return null;
+}
+
+function renderAnalyzedDestination(data) {
+  const loc = data.locations?.[0];
+  const name = loc?.name || "Erkannter Ort";
+  const display = loc?.display || "Aus deinem Reel analysiert";
+  const hashtags = data.hashtags || [];
+  const highlights = data.austria_info?.items?.length
+    ? data.austria_info.items.slice(0, 3).map(item => item.name)
+    : [display, "Lokale Highlights entdecken", "Route und Unterkunft prüfen"];
+
+  selectedKey = "";
+  document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
+  document.getElementById("tripKicker").textContent = `Analyse · ${data.platform || "Reel"}`;
+  document.getElementById("tripTitle").textContent = `${name} aus deinem Reel erkannt.`;
+  document.getElementById("tripCopy").textContent = data.caption || data.transcript || "Der Link wurde analysiert. Unten findest du die wichtigsten Reise-Optionen für den erkannten Ort.";
+  document.getElementById("destinationName").value = name;
+  document.getElementById("bestTime").textContent = "Je nach Saison prüfen";
+  document.getElementById("travelStyle").textContent = hashtags.slice(0, 2).join(", ") || "Reel-Inspiration";
+  document.getElementById("duration").textContent = "2-3 Tage";
+  document.getElementById("budget").textContent = data.oebb?.price_from || "Route prüfen";
+  document.getElementById("highlightList").innerHTML = highlights.map(highlight => `<div class="highlight">${highlight}</div>`).join("");
+
+  const origin = document.getElementById("originCity").value || "Vienna";
+  const checkIn = document.getElementById("checkIn").value;
+  const checkOut = document.getElementById("checkOut").value;
+  const travelers = document.getElementById("travelers").value || "2";
+  document.getElementById("trainLink").href = data.oebb?.booking_url || `https://tickets.oebb.at/de/ticket?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(name)}&date=${checkIn}`;
+  document.getElementById("hotelLink").href = data.hotel?.url || `https://www.booking.com/search.html?ss=${encodeURIComponent(name)}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${travelers}`;
+  document.getElementById("infoLink").href = data.austria_info?.search_url || `https://www.google.com/search?q=${encodeURIComponent(name + " austria.info")}`;
+  document.getElementById("trainTitle").textContent = `ÖBB · ${origin} → ${name}`;
+  document.getElementById("trainMeta").textContent = `${data.oebb?.duration || "Dauer prüfen"} · ${data.oebb?.price_from || "Preis prüfen"}`;
+  document.getElementById("hotelTitle").textContent = data.hotel?.label || `Unterkunft in ${name}`;
+  document.getElementById("hotelMeta").textContent = `Hotel · ${travelers} Reisende · ${readableDate(checkIn)} → ${readableDate(checkOut)}`;
+  document.getElementById("infoTitle").textContent = `${name} entdecken`;
+  document.getElementById("tripSection").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 async function analyze() {
   const url = document.getElementById("url").value.trim();
   const status = document.getElementById("statusBox");
@@ -683,12 +740,25 @@ async function analyze() {
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    const first = data.locations?.[0]?.name || "dein Ziel";
-    status.textContent = `Erkannt: ${first}. Wähle oben eine passende Karte oder nutze die Buchungslinks.`;
+    const text = [
+      data.caption,
+      data.transcript,
+      ...(data.hashtags || []),
+      ...(data.locations || []).map(loc => `${loc.name} ${loc.display || ""}`)
+    ].join(" ");
+    const key = destinationKeyFromText(text);
+    if (key) {
+      selectedKey = key;
+      renderDestination(true);
+      status.textContent = `Erkannt: ${DESTINATIONS[key].name}. Die passenden Reiseinfos sind unten geöffnet.`;
+    } else {
+      renderAnalyzedDestination(data);
+      status.textContent = "Analyse abgeschlossen. Die wichtigsten Infos aus deinem Reel sind unten geöffnet.";
+    }
   } catch (err) {
     status.style.display = "none";
     error.style.display = "block";
-    error.textContent = "Analyse fehlgeschlagen. Bitte prüfe den Link oder versuche es später erneut.";
+    error.textContent = "Analyse fehlgeschlagen. Instagram-Reels müssen öffentlich erreichbar sein; private oder loginpflichtige Links können nicht gelesen werden.";
   } finally {
     document.getElementById("analyzeBtn").disabled = false;
   }
@@ -704,7 +774,9 @@ document.addEventListener("DOMContentLoaded", () => {
   buildCards();
   renderDestination(false);
   ["originCity", "checkIn", "checkOut", "travelers"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => updateLinks(DESTINATIONS[selectedKey]));
+    document.getElementById(id).addEventListener("change", () => {
+      if (DESTINATIONS[selectedKey]) updateLinks(DESTINATIONS[selectedKey]);
+    });
   });
   document.getElementById("url").addEventListener("keydown", event => {
     if (event.key === "Enter") analyze();
