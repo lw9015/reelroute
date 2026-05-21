@@ -159,6 +159,26 @@ def ner_from_text(text, source):
     return locations
 
 
+def activity_tags_from_text(text):
+    """Erkennt einfache Aktivitäts-Tags aus Caption, Hashtags und Transkript."""
+    tags = []
+    text_lower = (text or "").lower()
+    activities = [
+        ("motocross", ["motocross", "mx track", "dirt bike", "dirtbike", "enduro"]),
+        ("mountainbike", ["mountainbike", "mountain bike", "mtb", "bikepark", "downhill"]),
+        ("wandern", ["wandern", "hiking", "hike", "trail", "trekking", "bergtour"]),
+        ("ski", ["ski", "skiing", "snowboard", "piste", "powder"]),
+        ("see", ["lake", "see", "lakeside", "boot", "boat", "schwimmen"]),
+        ("fotospots", ["foto", "photo", "photography", "fotospot", "aussichtspunkt"]),
+        ("food", ["food", "restaurant", "market", "markt", "naschmarkt", "breakfast", "coffee"]),
+        ("kultur", ["museum", "altstadt", "history", "historic", "castle", "schloss", "imperial"]),
+    ]
+    for label, words in activities:
+        if any(word in text_lower for word in words):
+            tags.append(label)
+    return tags
+
+
 def geocode(name):
     query = urllib.parse.urlencode({"q": name, "format": "json", "limit": 1})
     req = urllib.request.Request(
@@ -294,6 +314,7 @@ def analyze_reel(url, data=None):
         "hashtags": [],
         "caption": "",
         "transcript": "",
+        "activity_tags": [],
         "oebb": {},
         "hotel": {},
         "austria_info": {},
@@ -314,6 +335,7 @@ def analyze_reel(url, data=None):
         result["platform"] = meta.get("extractor", "unknown")
         result["caption"] = meta.get("description", "") or meta.get("title", "")
         result["hashtags"] = [t for t in (meta.get("tags") or []) if t.startswith("#")]
+        result["activity_tags"] = activity_tags_from_text(" ".join([result["caption"]] + result["hashtags"]))
 
         # Geo-Tag direkt?
         loc_meta = meta.get("location") or {}
@@ -348,6 +370,9 @@ def analyze_reel(url, data=None):
         result["steps"].append("ner")
         if result["transcript"]:
             result["locations"].extend(ner_from_text(result["transcript"], "audio"))
+            for tag in activity_tags_from_text(result["transcript"]):
+                if tag not in result["activity_tags"]:
+                    result["activity_tags"].append(tag)
 
         # Deduplizieren + Geocoding
         seen, unique = set(), []

@@ -127,7 +127,7 @@ h1 {
 .destination-wrap {
   max-width: 1540px;
   margin: 0 auto;
-  padding: 76px 32px 96px;
+  padding: 18px 32px 72px;
 }
 .section-head {
   max-width: 760px;
@@ -145,6 +145,22 @@ h1 {
   color: var(--muted);
   font-size: 17px;
   line-height: 1.6;
+}
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.tag-chip {
+  border-radius: 999px;
+  background: var(--red-soft);
+  color: var(--red);
+  padding: 7px 12px;
+  font: 700 12px "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .destination-grid {
   display: grid;
@@ -460,8 +476,8 @@ footer {
 <main>
   <section class="hero">
     <div class="eyebrow">Instagram oder TikTok Reel analysieren</div>
-    <h1>Vom Reel direkt zur buchbaren Reise.</h1>
-    <p class="hero-copy">Füge oben deinen Reel-Link ein oder wähle darunter einen Beispiel-Ort aus. ReelRoute erkennt den Ort und zeigt dir sofort die wichtigsten nächsten Schritte.</p>
+    <h1>Aus dem Reel passende Regionen finden.</h1>
+    <p class="hero-copy">Füge einen Link ein. ReelRoute erkennt Aktivitäten wie Wandern, Mountainbike, Motocross oder Food-Spots und schlägt Regionen vor, in denen du genau das machen kannst.</p>
     <div class="url-card hero-analyzer">
       <div class="trip-kicker">Reel-Link</div>
       <div class="url-row">
@@ -472,6 +488,16 @@ footer {
       <div id="statusBox">Reel wird analysiert...</div>
       <div id="errorBox"></div>
     </div>
+  </section>
+
+  <section class="destination-wrap" aria-label="Empfohlene Regionen">
+    <div class="section-head">
+      <div class="eyebrow" id="recommendationKicker">Empfohlene Regionen</div>
+      <h2 class="section-title" id="recommendationTitle">Passende Orte erscheinen direkt hier.</h2>
+      <p class="section-copy" id="recommendationCopy">Nach der Analyse werden erkannte Tags wie Wandern, Mountainbike oder Motocross genutzt, um diese Regionen einzuordnen.</p>
+      <div class="tag-row" id="activityTags"></div>
+    </div>
+    <div class="destination-grid" id="destinationGrid"></div>
   </section>
 
   <section class="trip-section" id="tripSection">
@@ -572,14 +598,6 @@ footer {
     </div>
   </section>
 
-  <section class="destination-wrap" aria-label="Weitere Orte entdecken">
-    <div class="section-head">
-      <div class="eyebrow">Weitere Inspiration</div>
-      <h2 class="section-title">Noch mehr Reel-Ideen für deine Reise.</h2>
-      <p class="section-copy">Wenn du nach der Analyse weiterstöbern möchtest, kannst du hier direkt beliebte Orte auswählen und die wichtigsten Reiseinfos öffnen.</p>
-    </div>
-    <div class="destination-grid" id="destinationGrid"></div>
-  </section>
 </main>
 
 <footer>ReelRoute Prototype · InnoDays 2026 · Live auf Vercel</footer>
@@ -590,12 +608,12 @@ const OEBB_FAHRPLAN_URL = "https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665";
 const DESTINATIONS = {
   hallstatt: {
     region: "Salzkammergut",
-    title: "Lakeside serenity",
+    title: "Hiking, lake trails & photo spots",
     name: "Hallstatt",
     image: imgBase + "hallstatt-austria.jpeg",
-    copy: "Hallstatt verbindet See, Berge und historische Gassen. Ideal, wenn das Reel nach ruhigen Aussichtspunkten, Fotospots und einem kompakten Wochenendtrip aussieht.",
+    copy: "Hallstatt und das Salzkammergut passen besonders gut zu Wandern, See-Erlebnissen, Aussichtspunkten und ruhigen Naturtrips.",
     bestTime: "Frühling oder Herbst",
-    style: "See, Aussicht, Altstadt",
+    style: "Wandern, See, Fotospots",
     duration: "2-3 Tage",
     budget: "ab ca. 35 Euro Zug",
     train: "4h 45min · 2 Umstiege · ab 35 Euro",
@@ -605,10 +623,10 @@ const DESTINATIONS = {
   },
   wien: {
     region: "Vienna",
-    title: "Markets & imperial city",
+    title: "Food markets & city culture",
     name: "Wien Naschmarkt",
     image: imgBase + "naschmarkt-vienna.jpeg",
-    copy: "Wien ist perfekt für Marktbesuche, Kaffeehäuser, Museen und kurze Wege. Der Naschmarkt ist ein starker Startpunkt für ein genussvolles City-Wochenende.",
+    copy: "Wien passt, wenn ein Reel Food-Spots, Märkte, Kaffeehäuser, Kultur oder urbane Wochenendtrips zeigt.",
     bestTime: "Ganzjährig",
     style: "Food, Kultur, Stadt",
     duration: "2-4 Tage",
@@ -620,12 +638,12 @@ const DESTINATIONS = {
   },
   salzburg: {
     region: "Salzburg",
-    title: "Old town weekend",
+    title: "Mountainbike, trails & old town",
     name: "Salzburg Altstadt",
     image: imgBase + "salzburg-altstadt.jpeg",
-    copy: "Salzburg eignet sich für Altstadtspaziergänge, historische Gassen, Musikgeschichte und schnelle Wochenendtrips mit direkter Weiterreise in die Berge.",
+    copy: "Salzburg eignet sich für Bergtage, Wandern, Mountainbike, Motocross-nahe Action-Reels, Altstadt und schnelle Weiterreise in alpine Regionen.",
     bestTime: "April bis Oktober",
-    style: "Altstadt, Kultur, Berge",
+    style: "Mountainbike, Motocross, Wandern, Berge",
     duration: "2-3 Tage",
     budget: "ab ca. 29 Euro Zug",
     train: "3h 20min · 1 Umstieg · ab 29 Euro",
@@ -636,11 +654,47 @@ const DESTINATIONS = {
 };
 
 let selectedKey = "hallstatt";
+let detectedActivities = [];
+
+function tagsFromText(text) {
+  const value = (text || "").toLowerCase();
+  const tags = [];
+  const rules = {
+    motocross: ["motocross", "mx track", "dirt bike", "dirtbike", "enduro"],
+    mountainbike: ["mountainbike", "mountain bike", "mtb", "bikepark", "downhill"],
+    wandern: ["wandern", "hiking", "hike", "trail", "trekking", "bergtour"],
+    ski: ["ski", "skiing", "snowboard", "piste", "powder"],
+    see: ["lake", "see", "lakeside", "boot", "boat", "schwimmen"],
+    fotospots: ["foto", "photo", "photography", "fotospot", "aussichtspunkt"],
+    food: ["food", "restaurant", "market", "markt", "naschmarkt", "breakfast", "coffee"],
+    kultur: ["museum", "altstadt", "history", "historic", "castle", "schloss", "imperial"]
+  };
+  Object.entries(rules).forEach(([tag, words]) => {
+    if (words.some(word => value.includes(word))) tags.push(tag);
+  });
+  return tags;
+}
+
+function destinationScore(item, tags) {
+  const haystack = `${item.region} ${item.title} ${item.name} ${item.copy} ${item.style} ${item.highlights.join(" ")}`.toLowerCase();
+  return tags.reduce((score, tag) => score + (haystack.includes(tag) ? 2 : 0), 0);
+}
+
+function updateRecommendationHeader(tags = []) {
+  const cleanTags = tags.length ? tags : ["wandern", "food", "kultur"];
+  document.getElementById("activityTags").innerHTML = cleanTags.map(tag => `<span class="tag-chip">${tag}</span>`).join("");
+  document.getElementById("recommendationKicker").textContent = tags.length ? "Erkannte Tags" : "Empfohlene Regionen";
+  document.getElementById("recommendationTitle").textContent = tags.length ? "Regionen passend zu deinem Reel." : "Regionen unter deinem Link.";
+  document.getElementById("recommendationCopy").textContent = tags.length
+    ? "Diese Karten ordnen die erkannten Aktivitäten passenden österreichischen Regionen zu. Wähle eine Karte für Details und Buchungslinks."
+    : "Nach der Analyse erscheinen hier die Aktivitäts-Tags; die Karten bleiben direkt darunter als regionale Vorschläge.";
+}
 
 function buildCards() {
   const grid = document.getElementById("destinationGrid");
-  grid.innerHTML = Object.entries(DESTINATIONS).map(([key, item]) => `
-    <button class="destination-card${key === selectedKey ? " active" : ""}" type="button" onclick="selectDestination('${key}')">
+  const entries = Object.entries(DESTINATIONS).sort((a, b) => destinationScore(b[1], detectedActivities) - destinationScore(a[1], detectedActivities));
+  grid.innerHTML = entries.map(([key, item]) => `
+    <button class="destination-card${key === selectedKey ? " active" : ""}" data-key="${key}" type="button" onclick="selectDestination('${key}')">
       <img src="${item.image}" alt="${item.name}">
       <span class="card-content">
         <span class="card-region">${item.region}</span>
@@ -679,8 +733,7 @@ function updateLinks(item) {
 function renderDestination(shouldScroll = true) {
   const item = DESTINATIONS[selectedKey];
   document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
-  const cardIndex = Object.keys(DESTINATIONS).indexOf(selectedKey);
-  document.querySelectorAll(".destination-card")[cardIndex]?.classList.add("active");
+  document.querySelector(`.destination-card[data-key="${selectedKey}"]`)?.classList.add("active");
   document.getElementById("tripKicker").textContent = `Ausgewählt · ${item.region}`;
   document.getElementById("tripTitle").textContent = `${item.name} in einem Tap buchen.`;
   document.getElementById("tripCopy").textContent = item.copy;
@@ -722,6 +775,7 @@ function renderEmptyTrip() {
   document.getElementById("trainLink").href = OEBB_FAHRPLAN_URL;
   document.getElementById("hotelLink").href = "https://www.booking.com";
   document.getElementById("infoLink").href = "https://www.austria.info/de";
+  updateRecommendationHeader([]);
 }
 
 function destinationKeyFromText(text) {
@@ -788,15 +842,20 @@ async function analyze() {
     const text = [
       data.caption,
       data.transcript,
+      ...(data.activity_tags || []),
       ...(data.hashtags || []),
       ...(data.locations || []).map(loc => `${loc.name} ${loc.display || ""}`)
     ].join(" ");
+    detectedActivities = [...new Set([...(data.activity_tags || []), ...tagsFromText(text)])];
+    updateRecommendationHeader(detectedActivities);
     const key = destinationKeyFromText(text);
     if (key) {
       selectedKey = key;
+      buildCards();
       renderDestination(true);
       status.textContent = `Erkannt: ${DESTINATIONS[key].name}. Die passenden Reiseinfos sind unten geöffnet.`;
     } else {
+      buildCards();
       renderAnalyzedDestination(data);
       status.textContent = "Analyse abgeschlossen. Die wichtigsten Infos aus deinem Reel sind unten geöffnet.";
     }
