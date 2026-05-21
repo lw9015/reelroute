@@ -386,15 +386,8 @@ def analyze_reel(url, data=None):
                 unique.append(loc)
         result["locations"] = unique[:5]
 
-        # Schritt 5: ÖBB + Hotel + austria.info
-        result["steps"].append("trip")
-        if result["locations"]:
-            top = result["locations"][0]["name"]
-            origin_city = data.get("origin", "Zürich HB")
-            result["oebb"] = get_oebb_connections(origin_city, top + " Hbf")
-            result["hotel"] = get_hotels(top)
-            result["austria_info"] = get_austria_info(top)
-            result["skyscanner"] = get_skyscanner(top, data.get("origin", "Zürich"))
+        # Schritt 5: Vorschlagsgrundlage für das Frontend bereitstellen
+        result["steps"].append("recommendations")
 
     result["processing_ms"] = int((time.time() - t0) * 1000)
     return result

@@ -272,76 +272,37 @@ h1 {
   font-size: 18px;
   line-height: 1.65;
 }
-.form-grid {
-  margin: 32px 0 22px;
+.variant-grid {
+  margin-top: 30px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
-.field {
-  min-height: 72px;
+.variant-box {
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 13px 16px;
+  padding: 16px;
   background: #fbfcfe;
 }
-.field label {
-  display: block;
-  margin-bottom: 7px;
+.variant-label {
   color: var(--muted);
   font: 700 10px "DM Mono", monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.field input, .field select {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ink);
-  font: 700 15px "DM Sans", sans-serif;
+.variant-value {
+  margin-top: 7px;
+  font-weight: 700;
+  line-height: 1.4;
 }
-.booking-list {
-  display: grid;
-  gap: 12px;
-}
-.booking-card {
-  display: grid;
-  grid-template-columns: 54px 1fr auto;
-  gap: 14px;
-  align-items: center;
-  min-height: 82px;
-  padding: 14px 16px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: #fbfcfe;
-  text-decoration: none;
-}
-.booking-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
+.selection-note {
+  margin-top: 18px;
+  border-radius: 18px;
   background: var(--red-soft);
   color: var(--red);
+  padding: 16px;
   font-weight: 700;
-}
-.booking-name {
-  font-size: 16px;
-  font-weight: 700;
-}
-.booking-meta {
-  margin-top: 4px;
-  color: var(--muted);
-  font: 500 12px "DM Mono", monospace;
-  text-transform: uppercase;
-}
-.booking-link {
-  color: var(--red);
-  font-weight: 700;
-  white-space: nowrap;
-  font-size: 13px;
+  line-height: 1.45;
 }
 .detail-panel {
   border-radius: 32px;
@@ -454,9 +415,7 @@ footer {
 @media (max-width: 640px) {
   .hero { padding: 36px 18px 20px; }
   .destination-wrap, .trip-section { padding-left: 18px; padding-right: 18px; }
-  .form-grid, .fact-grid, .url-row { grid-template-columns: 1fr; }
-  .booking-card { grid-template-columns: 46px 1fr; }
-  .booking-link { grid-column: 2; }
+  .variant-grid, .fact-grid, .url-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -507,65 +466,26 @@ footer {
         <h2 class="trip-title" id="tripTitle">Wähle oben einen Ort aus.</h2>
         <p class="trip-copy" id="tripCopy">Danach erscheinen hier die wichtigsten Informationen und buchbare Optionen.</p>
 
-        <div class="form-grid">
-          <div class="field">
-            <label for="originCity">Von</label>
-            <select id="originCity">
-              <option>Vienna</option>
-              <option>Zürich</option>
-              <option>Berlin</option>
-              <option>München</option>
-            </select>
+        <div class="tag-row" id="selectedTags" style="justify-content:flex-start"></div>
+        <div class="variant-grid">
+          <div class="variant-box">
+            <div class="variant-label">Region</div>
+            <div class="variant-value" id="selectedRegion">-</div>
           </div>
-          <div class="field">
-            <label for="destinationName">Nach</label>
-            <input id="destinationName" type="text" readonly value="-">
+          <div class="variant-box">
+            <div class="variant-label">Passt zu</div>
+            <div class="variant-value" id="selectedFit">-</div>
           </div>
-          <div class="field">
-            <label for="checkIn">Check-in</label>
-            <input id="checkIn" type="date">
+          <div class="variant-box">
+            <div class="variant-label">Nächster Schritt</div>
+            <div class="variant-value">Variante auswählen und Reiseidee verfeinern</div>
           </div>
-          <div class="field">
-            <label for="checkOut">Check-out</label>
-            <input id="checkOut" type="date">
-          </div>
-          <div class="field">
-            <label for="travelers">Reisende</label>
-            <select id="travelers">
-              <option>1</option>
-              <option selected>2</option>
-              <option>3</option>
-              <option>4</option>
-            </select>
+          <div class="variant-box">
+            <div class="variant-label">Ergebnis</div>
+            <div class="variant-value">Regionenvorschlag aus Reel-Tags</div>
           </div>
         </div>
-
-        <div class="booking-list">
-          <a class="booking-card" id="trainLink" href="https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665" target="_blank">
-            <span class="booking-icon">Ö</span>
-            <span>
-              <span class="booking-name" id="trainTitle">ÖBB Verbindung</span>
-              <span class="booking-meta" id="trainMeta">Abfahrt und Dauer werden nach Auswahl angezeigt</span>
-            </span>
-            <span class="booking-link">ÖBB öffnen</span>
-          </a>
-          <a class="booking-card" id="hotelLink" href="https://www.booking.com" target="_blank">
-            <span class="booking-icon">H</span>
-            <span>
-              <span class="booking-name" id="hotelTitle">Unterkunft</span>
-              <span class="booking-meta" id="hotelMeta">Booking.com Suche mit Reisedaten</span>
-            </span>
-            <span class="booking-link">Booking öffnen</span>
-          </a>
-          <a class="booking-card" id="infoLink" href="https://www.austria.info/de" target="_blank">
-            <span class="booking-icon">i</span>
-            <span>
-              <span class="booking-name" id="infoTitle">Offizielle Infos</span>
-              <span class="booking-meta">Highlights, Sehenswürdigkeiten und Region</span>
-            </span>
-            <span class="booking-link">Infos öffnen</span>
-          </a>
-        </div>
+        <div class="selection-note" id="selectionNote">Wähle eine der vorgeschlagenen Regionen aus, um die bevorzugte Variante festzulegen.</div>
       </div>
 
       <aside class="detail-panel">
@@ -585,7 +505,7 @@ footer {
               <div class="fact-value" id="duration">-</div>
             </div>
             <div class="fact">
-              <div class="fact-label">Budget</div>
+              <div class="fact-label">Charakter</div>
               <div class="fact-value" id="budget">-</div>
             </div>
           </div>
@@ -604,7 +524,6 @@ footer {
 
 <script>
 const imgBase = "{{ url_for('static', filename='examples/') }}";
-const OEBB_FAHRPLAN_URL = "https://fahrplan.oebb.at/webapp/#!P%7CTP!H%7C693665";
 const DESTINATIONS = {
   hallstatt: {
     region: "Salzkammergut",
@@ -615,11 +534,8 @@ const DESTINATIONS = {
     bestTime: "Frühling oder Herbst",
     style: "Wandern, See, Fotospots",
     duration: "2-3 Tage",
-    budget: "ab ca. 35 Euro Zug",
-    train: "4h 45min · 2 Umstiege · ab 35 Euro",
-    highlights: ["Hallstätter See", "Skywalk Aussichtsplattform", "Salzbergwerk Hallstatt"],
-    oebbTo: "Hallstatt",
-    infoUrl: "https://www.austria.info/de/reiseziele/orte/hallstatt"
+    budget: "Natur, Ruhe, Aussicht",
+    highlights: ["Hallstätter See", "Skywalk Aussichtsplattform", "Salzbergwerk Hallstatt"]
   },
   wien: {
     region: "Vienna",
@@ -630,11 +546,8 @@ const DESTINATIONS = {
     bestTime: "Ganzjährig",
     style: "Food, Kultur, Stadt",
     duration: "2-4 Tage",
-    budget: "ab ca. 39 Euro Zug",
-    train: "3h 58min · direkt · ab 39 Euro",
-    highlights: ["Naschmarkt Frühstück", "MuseumsQuartier", "Prater und Riesenrad"],
-    oebbTo: "Wien Hbf",
-    infoUrl: "https://www.austria.info/de/reiseziele/staedte/wien"
+    budget: "Urban, Kulinarik, Kultur",
+    highlights: ["Naschmarkt Frühstück", "MuseumsQuartier", "Prater und Riesenrad"]
   },
   salzburg: {
     region: "Salzburg",
@@ -645,11 +558,8 @@ const DESTINATIONS = {
     bestTime: "April bis Oktober",
     style: "Mountainbike, Motocross, Wandern, Berge",
     duration: "2-3 Tage",
-    budget: "ab ca. 29 Euro Zug",
-    train: "3h 20min · 1 Umstieg · ab 29 Euro",
-    highlights: ["Getreidegasse", "Festung Hohensalzburg", "Schloss Mirabell"],
-    oebbTo: "Salzburg Hbf",
-    infoUrl: "https://www.austria.info/de/reiseziele/staedte/salzburg"
+    budget: "Berge, Action, Altstadt",
+    highlights: ["Getreidegasse", "Festung Hohensalzburg", "Schloss Mirabell"]
   }
 };
 
@@ -686,7 +596,7 @@ function updateRecommendationHeader(tags = []) {
   document.getElementById("recommendationKicker").textContent = tags.length ? "Erkannte Tags" : "Empfohlene Regionen";
   document.getElementById("recommendationTitle").textContent = tags.length ? "Regionen passend zu deinem Reel." : "Regionen unter deinem Link.";
   document.getElementById("recommendationCopy").textContent = tags.length
-    ? "Diese Karten ordnen die erkannten Aktivitäten passenden österreichischen Regionen zu. Wähle eine Karte für Details und Buchungslinks."
+    ? "Diese Karten ordnen die erkannten Aktivitäten passenden österreichischen Regionen zu. Wähle eine Karte aus, um deine bevorzugte Variante festzulegen."
     : "Nach der Analyse erscheinen hier die Aktivitäts-Tags; die Karten bleiben direkt darunter als regionale Vorschläge.";
 }
 
@@ -705,29 +615,16 @@ function buildCards() {
   `).join("");
 }
 
-function toISO(date) {
-  return date.toISOString().slice(0, 10);
+function renderSelectedTags(tags = detectedActivities) {
+  const cleanTags = tags.length ? tags : ["tag wird nach analyse erkannt"];
+  document.getElementById("selectedTags").innerHTML = cleanTags.map(tag => `<span class="tag-chip">${tag}</span>`).join("");
 }
 
-function readableDate(value) {
-  if (!value) return "-";
-  return value.split("-").reverse().join(".");
-}
-
-function updateLinks(item) {
-  const origin = document.getElementById("originCity").value || "Vienna";
-  const checkIn = document.getElementById("checkIn").value;
-  const checkOut = document.getElementById("checkOut").value;
-  const travelers = document.getElementById("travelers").value || "2";
-  const hotelQuery = encodeURIComponent(item.name);
-  document.getElementById("trainLink").href = OEBB_FAHRPLAN_URL;
-  document.getElementById("hotelLink").href = `https://www.booking.com/search.html?ss=${hotelQuery}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${travelers}`;
-  document.getElementById("infoLink").href = item.infoUrl;
-  document.getElementById("trainTitle").textContent = `ÖBB Railjet · ${origin} → ${item.name}`;
-  document.getElementById("trainMeta").textContent = `Abfahrt ${readableDate(checkIn)} · ${travelers} Reisende · ${item.train}`;
-  document.getElementById("hotelTitle").textContent = `Unterkunft in ${item.name}`;
-  document.getElementById("hotelMeta").textContent = `Hotel · ${travelers} Reisende · ${readableDate(checkIn)} → ${readableDate(checkOut)}`;
-  document.getElementById("infoTitle").textContent = `${item.name} entdecken`;
+function updateSelectionDetails(item) {
+  document.getElementById("selectedRegion").textContent = item.region;
+  document.getElementById("selectedFit").textContent = item.style;
+  document.getElementById("selectionNote").textContent = `${item.name} ist als bevorzugte Variante ausgewählt. Im nächsten Schritt kann diese Variante weiter verfeinert werden.`;
+  renderSelectedTags();
 }
 
 function renderDestination(shouldScroll = true) {
@@ -735,9 +632,8 @@ function renderDestination(shouldScroll = true) {
   document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
   document.querySelector(`.destination-card[data-key="${selectedKey}"]`)?.classList.add("active");
   document.getElementById("tripKicker").textContent = `Ausgewählt · ${item.region}`;
-  document.getElementById("tripTitle").textContent = `${item.name} in einem Tap buchen.`;
+  document.getElementById("tripTitle").textContent = `${item.name} als Variante auswählen.`;
   document.getElementById("tripCopy").textContent = item.copy;
-  document.getElementById("destinationName").value = item.name;
   document.getElementById("detailImage").src = item.image;
   document.getElementById("detailImage").alt = item.name;
   document.getElementById("bestTime").textContent = item.bestTime;
@@ -745,7 +641,7 @@ function renderDestination(shouldScroll = true) {
   document.getElementById("duration").textContent = item.duration;
   document.getElementById("budget").textContent = item.budget;
   document.getElementById("highlightList").innerHTML = item.highlights.map(highlight => `<div class="highlight">${highlight}</div>`).join("");
-  updateLinks(item);
+  updateSelectionDetails(item);
   if (shouldScroll) document.getElementById("tripSection").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -758,23 +654,18 @@ function renderEmptyTrip() {
   document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
   document.getElementById("tripKicker").textContent = "Deine Analyse";
   document.getElementById("tripTitle").textContent = "Füge oben ein Reel ein.";
-  document.getElementById("tripCopy").textContent = "Nach der Analyse erscheinen hier der erkannte Ort, Highlights, Reisedaten und passende Links. Alternativ kannst du unten eine Inspiration auswählen.";
-  document.getElementById("destinationName").value = "-";
+  document.getElementById("tripCopy").textContent = "Nach der Analyse erscheinen hier die erkannten Tags, passende Regionen und die Details zur ausgewählten Variante.";
   document.getElementById("detailImage").src = DESTINATIONS.hallstatt.image;
   document.getElementById("detailImage").alt = "ReelRoute Reisevorschau";
   document.getElementById("bestTime").textContent = "Nach Analyse";
   document.getElementById("travelStyle").textContent = "Reel-Inspiration";
   document.getElementById("duration").textContent = "2-3 Tage";
-  document.getElementById("budget").textContent = "Route prüfen";
-  document.getElementById("highlightList").innerHTML = ["Ort aus Reel erkennen", "Highlights extrahieren", "Reiseoptionen öffnen"].map(highlight => `<div class="highlight">${highlight}</div>`).join("");
-  document.getElementById("trainTitle").textContent = "ÖBB Verbindung";
-  document.getElementById("trainMeta").textContent = "Wird nach Analyse oder Auswahl aktualisiert";
-  document.getElementById("hotelTitle").textContent = "Unterkunft";
-  document.getElementById("hotelMeta").textContent = "Reisedaten oben im Ergebnisbereich anpassen";
-  document.getElementById("infoTitle").textContent = "Offizielle Infos";
-  document.getElementById("trainLink").href = OEBB_FAHRPLAN_URL;
-  document.getElementById("hotelLink").href = "https://www.booking.com";
-  document.getElementById("infoLink").href = "https://www.austria.info/de";
+  document.getElementById("budget").textContent = "Nach Auswahl";
+  document.getElementById("highlightList").innerHTML = ["Tags im Reel erkennen", "Regionen vorschlagen", "Bevorzugte Variante auswählen"].map(highlight => `<div class="highlight">${highlight}</div>`).join("");
+  document.getElementById("selectedRegion").textContent = "-";
+  document.getElementById("selectedFit").textContent = "Noch keine Variante ausgewählt";
+  document.getElementById("selectionNote").textContent = "Wähle nach der Analyse eine der vorgeschlagenen Regionen aus, um die bevorzugte Variante festzulegen.";
+  renderSelectedTags([]);
   updateRecommendationHeader([]);
 }
 
@@ -791,34 +682,22 @@ function renderAnalyzedDestination(data) {
   const name = loc?.name || "Erkannter Ort";
   const display = loc?.display || "Aus deinem Reel analysiert";
   const hashtags = data.hashtags || [];
-  const highlights = data.austria_info?.items?.length
-    ? data.austria_info.items.slice(0, 3).map(item => item.name)
-    : [display, "Lokale Highlights entdecken", "Route und Unterkunft prüfen"];
+  const highlights = [display, "Passende Region auswählen", "Variante für den nächsten Schritt festlegen"];
 
   selectedKey = "";
   document.querySelectorAll(".destination-card").forEach(card => card.classList.remove("active"));
   document.getElementById("tripKicker").textContent = `Analyse · ${data.platform || "Reel"}`;
   document.getElementById("tripTitle").textContent = `${name} aus deinem Reel erkannt.`;
-  document.getElementById("tripCopy").textContent = data.caption || data.transcript || "Der Link wurde analysiert. Unten findest du die wichtigsten Reise-Optionen für den erkannten Ort.";
-  document.getElementById("destinationName").value = name;
+  document.getElementById("tripCopy").textContent = data.caption || data.transcript || "Der Link wurde analysiert. Wähle nun eine der vorgeschlagenen Regionen als bevorzugte Variante aus.";
   document.getElementById("bestTime").textContent = "Je nach Saison prüfen";
   document.getElementById("travelStyle").textContent = hashtags.slice(0, 2).join(", ") || "Reel-Inspiration";
   document.getElementById("duration").textContent = "2-3 Tage";
-  document.getElementById("budget").textContent = data.oebb?.price_from || "Route prüfen";
+  document.getElementById("budget").textContent = "Aus Reel abgeleitet";
   document.getElementById("highlightList").innerHTML = highlights.map(highlight => `<div class="highlight">${highlight}</div>`).join("");
-
-  const origin = document.getElementById("originCity").value || "Vienna";
-  const checkIn = document.getElementById("checkIn").value;
-  const checkOut = document.getElementById("checkOut").value;
-  const travelers = document.getElementById("travelers").value || "2";
-  document.getElementById("trainLink").href = data.oebb?.booking_url || OEBB_FAHRPLAN_URL;
-  document.getElementById("hotelLink").href = data.hotel?.url || `https://www.booking.com/search.html?ss=${encodeURIComponent(name)}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${travelers}`;
-  document.getElementById("infoLink").href = data.austria_info?.search_url || `https://www.google.com/search?q=${encodeURIComponent(name + " austria.info")}`;
-  document.getElementById("trainTitle").textContent = `ÖBB · ${origin} → ${name}`;
-  document.getElementById("trainMeta").textContent = `${data.oebb?.duration || "Dauer prüfen"} · ${data.oebb?.price_from || "Preis prüfen"}`;
-  document.getElementById("hotelTitle").textContent = data.hotel?.label || `Unterkunft in ${name}`;
-  document.getElementById("hotelMeta").textContent = `Hotel · ${travelers} Reisende · ${readableDate(checkIn)} → ${readableDate(checkOut)}`;
-  document.getElementById("infoTitle").textContent = `${name} entdecken`;
+  document.getElementById("selectedRegion").textContent = display;
+  document.getElementById("selectedFit").textContent = detectedActivities.length ? detectedActivities.join(", ") : "Aus Reel-Inhalt abgeleitet";
+  document.getElementById("selectionNote").textContent = `${name} wurde aus dem Reel erkannt. Wähle oben eine passende Regionenkachel als bevorzugte Variante.`;
+  renderSelectedTags();
   document.getElementById("tripSection").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -835,7 +714,7 @@ async function analyze() {
     const res = await fetch("/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, origin: document.getElementById("originCity").value })
+      body: JSON.stringify({ url })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -853,11 +732,11 @@ async function analyze() {
       selectedKey = key;
       buildCards();
       renderDestination(true);
-      status.textContent = `Erkannt: ${DESTINATIONS[key].name}. Die passenden Reiseinfos sind unten geöffnet.`;
+      status.textContent = `Erkannt: ${DESTINATIONS[key].name}. Die passenden Vorschläge sind geöffnet.`;
     } else {
       buildCards();
       renderAnalyzedDestination(data);
-      status.textContent = "Analyse abgeschlossen. Die wichtigsten Infos aus deinem Reel sind unten geöffnet.";
+      status.textContent = "Analyse abgeschlossen. Die erkannten Tags und Vorschläge sind geöffnet.";
     }
   } catch (err) {
     status.style.display = "none";
@@ -869,19 +748,8 @@ async function analyze() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const start = new Date();
-  start.setDate(start.getDate() + 14);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 3);
-  document.getElementById("checkIn").value = toISO(start);
-  document.getElementById("checkOut").value = toISO(end);
   buildCards();
   renderEmptyTrip();
-  ["originCity", "checkIn", "checkOut", "travelers"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => {
-      if (DESTINATIONS[selectedKey]) updateLinks(DESTINATIONS[selectedKey]);
-    });
-  });
   document.getElementById("url").addEventListener("keydown", event => {
     if (event.key === "Enter") analyze();
   });
